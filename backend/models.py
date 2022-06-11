@@ -1,6 +1,7 @@
 import os
 from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
 import json
 
 database_name = 'trivia'
@@ -8,6 +9,7 @@ db_username = 'student'
 db_password = 'student'
 db_url = 'localhost:5432'
 database_path = 'postgres://{}:{}@{}/{}'.format(db_username, db_password, db_url, database_name)
+
 
 db = SQLAlchemy()
 

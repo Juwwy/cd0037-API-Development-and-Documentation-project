@@ -11,7 +11,7 @@ class QuizView extends Component {
       quizCategory: null,
       previousQuestions: [],
       showAnswer: false,
-      categories: {},
+      categories: [],
       numCorrect: 0,
       currentQuestion: {},
       guess: '',
@@ -21,10 +21,11 @@ class QuizView extends Component {
 
   componentDidMount() {
     $.ajax({
-      url: `/categories`, //TODO: update request URL
+      url: '/api/v1/categories', //TODO: update request URL
       type: 'GET',
       success: (result) => {
         this.setState({ categories: result.categories });
+        //console.log(result)
         return;
       },
       error: (error) => {
@@ -49,7 +50,7 @@ class QuizView extends Component {
     }
 
     $.ajax({
-      url: '/quizzes', //TODO: update request URL
+      url: '/api/v1/quizzes', //TODO: update request URL
       type: 'POST',
       dataType: 'json',
       contentType: 'application/json',
@@ -107,17 +108,20 @@ class QuizView extends Component {
           <div className='play-category' onClick={this.selectCategory}>
             ALL
           </div>
-          {Object.keys(this.state.categories).map((id) => {
+          {this.state.categories.map((id, type) => {
+            let result = this.state.categories[type]
+            console.log(result)
+            let { type: myTypes, id: myId } = result
             return (
               <div
                 key={id}
                 value={id}
                 className='play-category'
                 onClick={() =>
-                  this.selectCategory({ type: this.state.categories[id], id })
+                  this.selectCategory({ myTypes, myId })
                 }
               >
-                {this.state.categories[id]}
+                {myTypes}
               </div>
             );
           })}

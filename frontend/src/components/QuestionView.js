@@ -11,18 +11,20 @@ class QuestionView extends Component {
       questions: [],
       page: 1,
       totalQuestions: 0,
-      categories: {},
+      categories: [],
       currentCategory: null,
     };
   }
 
   componentDidMount() {
     this.getQuestions();
+    
   }
+  
 
   getQuestions = () => {
     $.ajax({
-      url: `/questions?page=${this.state.page}`, //TODO: update request URL
+      url: `/api/v1/questions?page=${this.state.page}`, //TODO: update request URL
       type: 'GET',
       success: (result) => {
         this.setState({
@@ -41,7 +43,7 @@ class QuestionView extends Component {
   };
 
   selectPage(num) {
-    this.setState({ page: num }, () => this.getQuestions());
+    this.setState({ page: num }, () => {this.getQuestions(); this.createPagination()});
   }
 
   createPagination() {
@@ -65,7 +67,7 @@ class QuestionView extends Component {
 
   getByCategory = (id) => {
     $.ajax({
-      url: `/categories/${id}/questions`, //TODO: update request URL
+      url: `/api/v1/categories/${id}/questions`, //TODO: update request URL
       type: 'GET',
       success: (result) => {
         this.setState({
@@ -84,7 +86,7 @@ class QuestionView extends Component {
 
   submitSearch = (searchTerm) => {
     $.ajax({
-      url: `/questions`, //TODO: update request URL
+      url: `/api/v1/questions/search`, //TODO: update request URL
       type: 'POST',
       dataType: 'json',
       contentType: 'application/json',
@@ -112,7 +114,7 @@ class QuestionView extends Component {
     if (action === 'DELETE') {
       if (window.confirm('are you sure you want to delete the question?')) {
         $.ajax({
-          url: `/questions/${id}`, //TODO: update request URL
+          url: `/api/v1/questions/${id}`, //TODO: update request URL
           type: 'DELETE',
           success: (result) => {
             this.getQuestions();
@@ -138,36 +140,48 @@ class QuestionView extends Component {
             Categories
           </h2>
           <ul>
-            {Object.keys(this.state.categories).map((id) => (
+            {
+            this.state.categories.map((type) => {
+              const {id, type: myType} = type;
+              console.log(myType.toLowerCase(), id);
+              
+           return   (
               <li
                 key={id}
                 onClick={() => {
                   this.getByCategory(id);
                 }}
               >
-                {this.state.categories[id]}
+                {myType}
+                {console.log(`${this.state.categories[myType]}.svg`)}
                 <img
                   className='category'
-                  alt={`${this.state.categories[id].toLowerCase()}`}
-                  src={`${this.state.categories[id].toLowerCase()}.svg`}
+                  alt={`${myType}`}
+                  src={`${myType}.svg`}
                 />
               </li>
-            ))}
+            )})}
           </ul>
           <Search submitSearch={this.submitSearch} />
         </div>
         <div className='questions-list'>
           <h2>Questions</h2>
-          {this.state.questions.map((q, ind) => (
+          {this.state.questions.map((q, ind) => {
+            const result = this.state.categories[q.category];
+            
+            console.log(result);
+            return(
             <Question
               key={q.id}
               question={q.question}
               answer={q.answer}
-              category={this.state.categories[q.category]}
+              category={{...result}}
               difficulty={q.difficulty}
               questionAction={this.questionAction(q.id)}
+              pagination={this.createPagination()}
             />
-          ))}
+          )})}
+          
           <div className='pagination-menu'>{this.createPagination()}</div>
         </div>
       </div>
