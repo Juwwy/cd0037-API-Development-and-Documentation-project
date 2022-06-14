@@ -32,10 +32,10 @@ class Question(db.Model):
     __tablename__ = 'questions'
 
     id = Column(Integer, primary_key=True)
-    question = Column(String)
-    answer = Column(String)
-    category = Column(String)
-    difficulty = Column(Integer)
+    question = Column(String(150), nullable=False)
+    answer = Column(String(70), nullable=False)
+    category = Column(String(1), nullable=False)
+    difficulty = Column(Integer, nullable=False)
 
     def __init__(self, question, answer, category, difficulty):
         self.question = question
@@ -47,7 +47,8 @@ class Question(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self):
+    def update():
+       # db.session.update(self)
         db.session.commit()
 
     def delete(self):
@@ -71,7 +72,7 @@ class Category(db.Model):
     __tablename__ = 'categories'
 
     id = Column(Integer, primary_key=True)
-    type = Column(String)
+    type = Column(String, nullable=False)
 
     def __init__(self, type):
         self.type = type

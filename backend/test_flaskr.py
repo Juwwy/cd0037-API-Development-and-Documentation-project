@@ -51,31 +51,131 @@ class TriviaTestCase(unittest.TestCase):
 
     #     self.assertEqual(res.status_code, 200)
 
+    #================= Question Test =========
     def test_get_paginated_question(self):
-        res = self.client().get('/questions')
+        res = self.client().get('/api/v1/questions')
+        data = json.loads(res.data)
+        print(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['questions'])
+        self.assertTrue(len(data['questions']), 19)
+
+    def test_404_sent_not_valid_page(self):
+        res = self.client().get('/api/v1/questions?page=1000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Not found')
+
+    #======== Question Search =========
+
+    def test_search_question(self):
+        res = self.client().post('/api/v1/questions/search', json={'searchTerm': 'title'})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['questions'])
-        self.assertTrue(len(data['questions']))
+
+    def test_no_search_question(self):
+        res = self.client().post('/api/v1/questions/search', json={'searchTerm': 'jug'})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Not found')
+
+    #======== Question Create ===
+
+    def test_create_question(self):
+        res = self.client().post('/api/v1/questions', json={'question' : 'fastest animal in jungle?', 'answer': 'cheetah', 'difficulty': 3, 'category': '4'})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['message'], 'created successful')
+   
+    def test_not_created_question(self):
+        res = self.client().post('/api/v1/questions', json={'question': 123, 'answer': None, 'difficulty':3, 'category':3})
+        data = json.loads(res.data)
+        #======= NOTED ============
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+        self.assertEqual(data["message"], 'created successful')
+
+    #===== Question Delete =====
+
+    # def test_delete_question(self):
+    #     res = self.client().delete(f'/api/v1/questions/{25}')
+    #     data = json.loads(res.data)
+
+    #     self.assertEqual(res.status_code, 200)
+    #     self.assertEqual(data['success'], True)
+    #     self.assertEqual(data['message'], 'Deleted successfully!')
+
+    def test_delete_question_not_found(self):
+        res = self.client().delete(f'/api/v1/questions/{450}' )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Not found')
+
+    def test_update_question(self):
+        res = self.client().put(f'/api/v1/questions/{27}/update', json={'question': '1234 is a ___', 'answer':'numbers', 'category':'3', 'difficulty':2})
+        data = json.loads(res.data)
+        #quest = Question.query.filter(Question.id == 27).one_or_none()
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['message'], 'Update was successful!')
+
+    def test_not_updated_question(self):
+        res = self.client().put(f'/api/v1/questions/{24}/update', json={'q1': '', 'q2':'', 'q3':0, 'q4':''})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Not found')
+
+    def test_play_quiz(self):
+        res = self.client().post('/api/v1/quizzes', json={'previous_questions':'Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?', 'quiz_category_id':'2'})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['question'])
+
+    
+    def test_not_play_quiz(self):
+        res = self.client().post('/api/v1/quizzes', json={'previous_questions':'King cow is who', 'quiz_category_id':'2'})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertTrue(data['question'])
+
+    
+
+    #=============== Categories Test ==================
 
     def test_get_categories(self):
-        res = self.client().get('/categories')
+        res = self.client().get('/api/v1/categories')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['categories'])
         self.assertTrue(len(data['categories']))
-
-    def test_404_sent_not_valid_page(self):
-        res = self.client().get('/questions?page=1000', json={'difficulty' : 2})
+    
+    def test_no_category(self):
+        res = self.client().get('/api/v1/categories/page')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'resource not found')
+        self.assertEqual(data['message'], 'Not found')
 
 
 # Make the tests conveniently executable

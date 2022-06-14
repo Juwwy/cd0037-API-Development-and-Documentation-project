@@ -73,7 +73,7 @@ You will need to provide detailed documentation of your API endpoints including 
 
 ### Documentation Example
 
-`GET '/api/v1.0/categories'`
+`GET '/api/v1/categories'`
 
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
@@ -89,6 +89,152 @@ You will need to provide detailed documentation of your API endpoints including 
   "6": "Sports"
 }
 ```
+---
+
+`GET '/api/v1/questions'`
+- Fetches a dictionary of questions in which the keys are the ids and the value is the corresponding string and integers of the questions' properties base on standard set pagination = 10 per page.
+- Request Arguments: `?page=1` can be append as querystring to get content on other pages 
+- Returns: An object such as the following JSON:
+```json
+{
+  "categories": [
+    {
+  "1": "Science",
+  "2": "Art",
+  "3": "Geography",
+  "4": "History",
+  "5": "Entertainment",
+  "6": "Sports"
+}
+  ],
+
+  "questions": 
+    [{"answer":"Apollo 13","category":5,"difficulty":4,"id":2,"question":"What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"},
+    {"answer":"Tom Cruise","category":5,"difficulty":4,"id":4,"question":"What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"},
+    {"answer":"Maya Angelou","category":4,"difficulty":2,"id":5,"question":"Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"},
+    {"answer":"Edward Scissorhands","category":5,"difficulty":3,"id":6,"question":"What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"},{"answer":"Muhammad Ali","category":4,"difficulty":1,"id":9,"question":"What boxer's original name is Cassius Clay?"},
+    {"answer":"Brazil","category":6,"difficulty":3,"id":10,"question":"Which is the only team to play in every soccer World Cup tournament?"},
+    {"answer":"Uruguay","category":6,"difficulty":4,"id":11,"question":"Which country won the first ever soccer World Cup in 1930?"},
+    {"answer":"George Washington Carver","category":4,"difficulty":2,"id":12,"question":"Who invented Peanut Butter?"},
+    {"answer":"Lake Victoria","category":3,"difficulty":2,"id":13,"question":"What is the largest lake in Africa?"},
+    {"answer":"The Palace of Versailles","category":3,"difficulty":3,"id":14,"question":"In which royal palace would you find the Hall of Mirrors?"}
+  ], 
+  "success":true
+}
+```
+---
+
+`POST '/api/v1/questions'`
+- Request Arguments: no request parameter needed.
+- Returns: After success of the request, it generate a unique `id` for the new created object. Finally  returns an object such as the following JSON:
+
+```json
+{
+  "success": true, 
+  "response": 201, 
+  "message": "created successful"
+}
+```
+---
+
+
+`POST '/api/v1/questions/<int:question_id>/update'`
+- Request Arguments: `int:question_id` to query particular object to be updated
+- Returns: An object such as the following JSON:
+
+```json
+{
+  "success": true,
+  "response" : 200,
+  "message": "Update was successful!",
+    
+}
+```
+---
+
+`DELETE '/api/v1/questions/<int:question_id>'`
+- Request Arguments: `int:question_id` to query particular object to be deleted
+- Returns: An object such as the following JSON:
+
+```json
+{
+  "success" : true, 
+  "response": 200,
+  "message": "Deleted successfully!"
+}
+```
+---
+
+`POST '/api/v1/questions/search'`
+
+- Fetches an list of dictionary of questions in which the keys are the ids and the value is the corresponding string and integers of the questions' base on the search query `searchTerm = 'title'`
+- Request Arguments: no request parameter is need
+- Returns: An object such as the following JSON:
+
+```json
+{
+  "success": true,
+  "questions": [
+    {'id': 5, 'question': "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?", 'answer': 'Maya Angelou', 'category': 4, 'difficulty': 2}, 
+    {'id': 6, 'question': 'What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?', 'answer': 'Edward Scissorhands', 'category': 5, 'difficulty': 3}
+    ],
+  "total_questions": 23,
+  "current_category": ['Entertainment', 'History']
+}
+```
+---
+
+`GET '/api/v1/categories/<int:category_id>/questions'`
+- Fetches an list of dictionary of questions in which the keys are the ids and the value is the corresponding string and integers of the questions' base on a particular category. Also, total questions count and current category base on the request made.
+- Request Arguments: it fetch base on category selected. A request `'/api/v1/categories/3/questions'` will return the json below
+- Returns: An object such as the following JSON:
+
+```json
+{
+    "current_category": "Geography",
+    "questions": [
+        {
+            "answer": "Lake Victoria",
+            "category": 3,
+            "difficulty": 2,
+            "id": 13,
+            "question": "What is the largest lake in Africa?"
+        },
+        {
+            "answer": "Agra",
+            "category": 3,
+            "difficulty": 2,
+            "id": 15,
+            "question": "The Taj Mahal is located in which Indian city?"
+        },
+        {
+            "answer": "The Palace of Versailles Juwwy",
+            "category": 3,
+            "difficulty": 5,
+            "id": 14,
+            "question": "In which royal palace would you find the Hall of Mirrors?"
+        }
+    ],
+    "success": true,
+    "total_questions": 23
+}
+```
+--
+`POST '/api/v1/quizzes'`
+- Fetches question at random across all categories. It work like a quiz game where total correctly answered questions score will be display at the end
+- Request Arguments: no request argument needed
+- Returns: An object such as the following JSON:
+
+```json
+{
+  'id': 27, 
+'question': 'Who is ola of lagos', 
+'answer': 'The car spotter in Nigeria', 
+'category': 2, 
+'difficulty': 4
+}
+```
+
 
 ## Testing
 
