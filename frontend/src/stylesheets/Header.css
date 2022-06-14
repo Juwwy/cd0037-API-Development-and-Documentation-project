@@ -1,0 +1,8 @@
+div > h2{
+    cursor: pointer;
+    
+}
+
+h2:hover{
+    border-bottom: 5px solid salmon;
+}

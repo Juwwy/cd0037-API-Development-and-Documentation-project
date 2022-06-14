@@ -7,14 +7,17 @@
   padding: 20px;
   padding-right: 40%;
   padding-left: 5%;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
 }
 
 .App-header > h1 {
   color: dodgerblue;
+  cursor: pointer;
 }
 
 .App-intro {
   font-size: large;
+ 
 }
 
 h2 {
@@ -24,6 +27,10 @@ h2 {
 li {
   text-align: center;
   margin: 5px 0px;
+  cursor: pointer;
+}
+li:hover{
+  border: 2px dotted sandybrown;
 }
 
 ul {
