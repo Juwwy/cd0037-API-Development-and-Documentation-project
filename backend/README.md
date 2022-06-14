@@ -219,7 +219,7 @@ You will need to provide detailed documentation of your API endpoints including 
     "total_questions": 23
 }
 ```
---
+---
 `POST '/api/v1/quizzes'`
 - Fetches question at random across all categories. It work like a quiz game where total correctly answered questions score will be display at the end
 - Request Arguments: no request argument needed
