@@ -65,7 +65,7 @@ You can optionally update this game play to increase the number of questions or 
 
 ### Expected endpoints and behaviors
 
-`GET '/categories'`
+`GET '/api/v1/categories'`
 
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
