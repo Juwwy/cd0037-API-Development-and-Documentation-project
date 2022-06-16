@@ -93,33 +93,6 @@ def create_app(test_config=None):
         except:
             abort(404)
 
-    #======== Question Patch Endpoint ============
-
-    # @app.route('/api/v1/questions/<int:question_id>', methods=['PATCH'])
-    # def question_patch(question_id):
-
-    #     body = request.get_json()
-    #     #print(body)
-    #     try:
-    #         quest = Question.query.filter(Question.id == question_id).one_or_none()
-    #         if quest is None:
-    #             abort(404)
-
-    #         if 'question' in body:
-    #             quest.question = body.get('question')
-            
-
-    #         Question.update()
-
-    #         return jsonify({
-    #             'success' : True, 
-    #             'message' : 'Patched Successfully!'
-    #         })
-    #     except:
-    #         abort(400)
-
-# or 'In which royal palace would you find the Hall of Mirrors?'
-#or 'The Palace of Versailles Juwwy' or '3' or 5
 
     #============ Question Update Endpoint ==========
     @app.route('/api/v1/questions/<int:question_id>/update', methods=['POST'])
@@ -164,7 +137,10 @@ def create_app(test_config=None):
 
         try:
             Question.delete(quest)
-            return jsonify({"success" : True, "message": "Deleted successfully!"})
+            return jsonify({"success" : True,
+             "message": "Deleted successfully!", 
+             "id": question_id
+             })
         except:
             db.session.rollback()
             abort(404)
@@ -209,32 +185,25 @@ def create_app(test_config=None):
         try:
             total_quest = Question.query.all()
             request_data = request.get_json()
-            searchval =request_data['searchTerm']
-           # print(searchval)
-            result  = Question.query.filter(Question.question.ilike(f'%{searchval}%')).all()
-            
+            searchval = request_data['searchTerm']
+            result = Question.query.filter(Question.question.ilike(f'%{searchval}%')).all()
             if len(result) > 0:
                 quest_str = [quest.format() for quest in result]
                 cate = []
                 cateType = []
                 for res in result:
-                    cate.append( Category.query.filter(res.category == Category.id).first())
-                    
-
+                    cate.append(Category.query.filter(res.category == Category.id).first())
                 for catg in cate:
                     cateType.append(catg.type)
-
-                # print(len(cate))
                 d = set(cateType)
                 z = [s.format() for s in d]
-                
-                # print(quest_str)
-                # print(len(total_quest))
-                # print(z)
-
-                return jsonify({'success': True, 'questions' : quest_str, 'total_questions': len(total_quest), "current_category": z })
+                return jsonify({
+                    'success': True,
+                    'questions': quest_str,
+                    'total_questions': len(total_quest),
+                    "current_category": z, })
             else:
-                abort(404)
+                abort(404)    
         except:
             abort(404)
 
@@ -271,9 +240,10 @@ def create_app(test_config=None):
             request_data = request.get_json()
             previous_questions = request_data['previous_questions']
             quiz_category_id = request_data['quiz_category']['id']
-
-            # if quiz_category_id is None:
-            #     abort(422)
+            print(previous_questions)
+            print(quiz_category_id)
+            if quiz_category_id is None:
+                abort(422)
             
             if quiz_category_id == 0:
                 question = Question.query.filter(~Question.id.in_(previous_questions)).order_by(func.random()).limit(1).first()
@@ -281,7 +251,7 @@ def create_app(test_config=None):
                 question = Question.query.filter(Question.category == int(quiz_category_id))\
                     .filter(~Question.id.in_(previous_questions)).order_by(func.random()).limit(1).first()
 
-            print(question.format())
+            #print(question.format())
 
             return jsonify({
                 'success': True,

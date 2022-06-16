@@ -19,15 +19,7 @@ class TriviaTestCase(unittest.TestCase):
         self.db_password = 'student'
         self.db_url = 'localhost:5432'
         self.database_path = 'postgres://{}:{}@{}/{}'.format(self.db_username, self.db_password, self.db_url, self.database_name)
-        # 'postgres://{}:{}@{}/{}'.format(self.db_username, self.db_password, db_url, database_name)
         setup_db(self.app, self.database_path)
-
-        # self.new_question = {
-        #     "question" : "The tall mountain on earth is?",
-        #     "answer": "Kilimanjaro",
-        #     "category": "1",
-        #     "difficulty" : 3
-        # }
 
         # binds the app to the current context
         with self.app.app_context():
@@ -44,12 +36,6 @@ class TriviaTestCase(unittest.TestCase):
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
-
-    # def test_given_behavior(self):
-    #     """hjfj"""
-    #     res = self.client().get('/questions')
-
-    #     self.assertEqual(res.status_code, 200)
 
     #================= Question Test =========
     def test_get_paginated_question(self):
@@ -73,7 +59,7 @@ class TriviaTestCase(unittest.TestCase):
     #======== Question Search =========
 
     def test_search_question(self):
-        res = self.client().post('/api/v1/questions/search', json={'searchTerm': 'title'})
+        res = self.client().post('/api/v1/questions/search', json={"searchTerm": "title"})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -81,17 +67,17 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['questions'])
 
     def test_no_search_question(self):
-        res = self.client().post('/api/v1/questions/search', json={'searchTerm': 'jug'})
+        res = self.client().post('/api/v1/questions/search', json={"searchTerm": "jug"})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Not found')
 
-    #======== Question Create ===
+    #======== Question Create ===============
 
     def test_create_question(self):
-        res = self.client().post('/api/v1/questions', json={'question' : 'fastest animal in jungle?', 'answer': 'cheetah', 'difficulty': 3, 'category': '4'})
+        res = self.client().post('/api/v1/questions', json={"question" : "fastest animal in jungle?", "answer": "cheetah", "difficulty": 3, "category": "4"})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -99,17 +85,17 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'created successful')
    
     def test_not_created_question(self):
-        res = self.client().post('/api/v1/questions', json={'question': 123, 'answer': None, 'difficulty':3, 'category':3})
+        res = self.client().post('/api/v1/questions', json={"question": 123, "answer": None, "difficulty":3, "category":3})
         data = json.loads(res.data)
         #======= NOTED ============
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
         self.assertEqual(data["message"], 'created successful')
 
-    #===== Question Delete =====
+    #===== Question Delete ==============
 
     def test_delete_question(self):
-        res = self.client().delete(f'/api/v1/questions/{25}')
+        res = self.client().delete(f'/api/v1/questions/{31}')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -124,8 +110,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Not found')
 
+    #========== Update Question ===========
+
     def test_update_question(self):
-        res = self.client().put(f'/api/v1/questions/{27}/update', json={'question': '1234 is a ___', 'answer':'numbers', 'category':'3', 'difficulty':2})
+        res = self.client().put(f'/api/v1/questions/{27}/update', json={"question": "1234 is a ___", "answer":"numbers", "category":'3', "difficulty":2})
         data = json.loads(res.data)
         #quest = Question.query.filter(Question.id == 27).one_or_none()
 
@@ -134,23 +122,31 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Update was successful!')
 
     def test_not_updated_question(self):
-        res = self.client().put(f'/api/v1/questions/{24}/update', json={'q1': '', 'q2':'', 'q3':0, 'q4':''})
+        res = self.client().put(f'/api/v1/questions/{24}/update', json={"q1": "", "q2":"", "q3":0, "q4":""})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Not found')
 
+    
+    #============ Play Quiz =============
+
     def test_play_quiz(self):
-        res = self.client().post('/api/v1/quizzes', json={'previous_questions':'Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?', 'quiz_category_id':'2'})
-        data = json.loads(res.data)
+        self.play_quiz_option = {
+            "previous_questions": [3],
+            "quiz_category": {'id':3, 'type': 'Geography'}
+        }
+        res = self.client().post('/api/v1/quizzes', json=self.play_quiz_option)
+        #data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
-        self.assertTrue(data['question'])
+        self.assertEqual(res.get_json()['success'], True)
+        self.assertIn('question', res.get_json())
 
     
     def test_not_play_quiz(self):
-        res = self.client().post('/api/v1/quizzes', json={'previous_questions':'King cow is who', 'quiz_category_id':'2'})
+        res = self.client().post('/api/v1/quizzes', json={"previous_questions": "King cow is who", "quiz_category_id":"2"})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
