@@ -95,7 +95,7 @@ def create_app(test_config=None):
 
 
     #============ Question Update Endpoint ==========
-    @app.route('/api/v1/questions/<int:question_id>/update', methods=['POST'])
+    @app.route('/api/v1/questions/<int:question_id>/update', methods=['PUT'])
     def question_update(question_id):
         request_data = request.get_json()
         q1 = request_data['question'] 
