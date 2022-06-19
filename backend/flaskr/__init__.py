@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
 
+
 from sqlalchemy import JSON, func
 
 from models import setup_db, Question, Category, db
@@ -26,8 +27,9 @@ def paginate_quests(request, quests):
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
-    
+    #load_dotenv()
     setup_db(app)
+
 
     """
     @TODO: Set up CORS. Allow '*' for origins.

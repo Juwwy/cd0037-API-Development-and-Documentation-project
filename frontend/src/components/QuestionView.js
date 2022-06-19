@@ -66,22 +66,29 @@ class QuestionView extends Component {
   }
 
   getByCategory = (id) => {
-    $.ajax({
-      url: `/api/v1/categories/${id}/questions`, //TODO: update request URL
-      type: 'GET',
-      success: (result) => {
-        this.setState({
-          questions: result.questions,
-          totalQuestions: result.total_questions,
-          currentCategory: result.current_category,
-        });
-        return;
-      },
-      error: (error) => {
-        alert('Unable to load questions. Please try your request again');
-        return;
-      },
-    });
+    console.log(id)
+    if(id != null || id !=0)
+    {
+      $.ajax({
+        url: `/api/v1/categories/${id}/questions`, //TODO: update request URL
+        type: 'GET',
+        success: (result) => {
+          this.setState({
+            questions: result.questions,
+            totalQuestions: result.total_questions,
+            currentCategory: result.current_category,
+          });
+          return;
+        },
+        error: (error) => {
+          alert('Unable to load questions. Please try your request again');
+          return;
+        },
+      });
+    }else{
+      
+      return
+    }
   };
 
   submitSearch = (searchTerm) => {
@@ -129,6 +136,7 @@ class QuestionView extends Component {
   };
 
   render() {
+    var counter = 0;
     return (
       <div className='question-view'>
         <div className='categories-list'>
@@ -141,9 +149,14 @@ class QuestionView extends Component {
           </h2>
           <ul>
             {
-            this.state.categories.map((type) => {
-              const {id, type: myType} = type;
-              console.log(myType.toLowerCase(), id);
+            this.state.categories.map(({id, type}) => {
+              const {id: myId, type: myType} = type;
+              //console.log(myType.toLowerCase(), id);
+              console.log(id, type)
+              
+              var newList = ["science", "art", "geography", "history", "entertainment", "sports"];
+            // if(id >= 1)
+            //  counter++;
               
            return   (
               <li
@@ -152,12 +165,12 @@ class QuestionView extends Component {
                   this.getByCategory(id);
                 }}
               >
-                {myType}
-                {console.log(`${this.state.categories[myType]}.svg`)}
+                {type}
+                {console.log(`${this.state.categories[id]}.svg`)}
                 <img
                   className='category'
-                  alt={`${myType}`}
-                  src={`${myType}.svg`}
+                  alt={`${type}`}
+                  src={`${type}.svg`}
                 />
               </li>
             )})}
@@ -175,7 +188,7 @@ class QuestionView extends Component {
               key={q.id}
               question={q.question}
               answer={q.answer}
-              category={{...result}}
+              category={q.categories}
               difficulty={q.difficulty}
               questionAction={this.questionAction(q.id)}
               pagination={this.createPagination()}
