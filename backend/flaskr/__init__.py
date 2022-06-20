@@ -97,34 +97,34 @@ def create_app(test_config=None):
 
 
     #============ Question Update Endpoint ==========
-    @app.route('/api/v1/questions/<int:question_id>/update', methods=['PUT'])
-    def question_update(question_id):
-        request_data = request.get_json()
-        q1 = request_data['question'] 
-        q2 = request_data['answer'] 
-        q3 = request_data['category'] 
-        q4 = request_data['difficulty'] 
+    # @app.route('/api/v1/questions/<int:question_id>/update', methods=['PUT'])
+    # def question_update(question_id):
+    #     request_data = request.get_json()
+    #     q1 = request_data['question'] 
+    #     q2 = request_data['answer'] 
+    #     q3 = request_data['category'] 
+    #     q4 = request_data['difficulty'] 
 
-        try:
-            db.session.query(Question).filter(Question.id == question_id).update({
-                'question' : q1,
-                'answer': q2,
-                'category': q3,
-                'difficulty': q4
-            })
+    #     try:
+    #         db.session.query(Question).filter(Question.id == question_id).update({
+    #             'question' : q1,
+    #             'answer': q2,
+    #             'category': q3,
+    #             'difficulty': q4
+    #         })
            
             
-            Question.update()
-            return jsonify({
-                'success': True,
-                "message": "Update was successful!"
-            })
-        except Exception as error:
-            db.session.rollback()
-            print(error)
-            abort(404)
-        finally:
-            db.session.close()
+    #         Question.update()
+    #         return jsonify({
+    #             'success': True,
+    #             "message": "Update was successful!"
+    #         })
+    #     except Exception as error:
+    #         db.session.rollback()
+    #         print(error)
+    #         abort(404)
+    #     finally:
+    #         db.session.close()
    
 
 

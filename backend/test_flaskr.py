@@ -121,13 +121,13 @@ class TriviaTestCase(unittest.TestCase):
     #     self.assertEqual(data['success'], True)
     #     self.assertEqual(data['message'], 'Update was successful!')
 
-    def test_not_updated_question(self):
-        res = self.client().put(f'/api/v1/questions/{24}/update', json={"q1": "", "q2":"", "q3":0, "q4":""})
-        data = json.loads(res.data)
+    # def test_not_updated_question(self):
+    #     res = self.client().put(f'/api/v1/questions/{24}/update', json={"q1": "", "q2":"", "q3":0, "q4":""})
+    #     data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 500)
-        self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Oops! your request can\'t be processed. Internal server error')
+    #     self.assertEqual(res.status_code, 500)
+    #     self.assertEqual(data['success'], False)
+    #     self.assertEqual(data['message'], 'Oops! your request can\'t be processed. Internal server error')
 
     
     #============ Play Quiz =============
