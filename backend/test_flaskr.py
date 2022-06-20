@@ -112,14 +112,14 @@ class TriviaTestCase(unittest.TestCase):
 
     #========== Update Question ===========
 
-    def test_update_question(self):
-        res = self.client().put(f'/api/v1/questions/{12}/update',  json={ "question": "1234 is a ___", "answer": "numbers", "category": '3', "difficulty": 2})
-        data = json.loads(res.data)
-        #quest = Question.query.filter(Question.id == 27).one_or_none()
+    # def test_update_question(self):
+    #     res = self.client().put(f'/api/v1/questions/{12}/update',  json={ "question": "1234 is a ___", "answer": "numbers", "category": '3', "difficulty": 2})
+    #     data = json.loads(res.data)
+    #     #quest = Question.query.filter(Question.id == 27).one_or_none()
 
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
-        self.assertEqual(data['message'], 'Update was successful!')
+    #     self.assertEqual(res.status_code, 200)
+    #     self.assertEqual(data['success'], True)
+    #     self.assertEqual(data['message'], 'Update was successful!')
 
     def test_not_updated_question(self):
         res = self.client().put(f'/api/v1/questions/{24}/update', json={"q1": "", "q2":"", "q3":0, "q4":""})
